@@ -1,10 +1,16 @@
 import streamlit as st
 import pandas as pd
-import base64
+from io import BytesIO
 
 def load_data(file):
     data = pd.read_csv(file)
     return data
+
+def save_to_csv(data):
+    bytes = BytesIO()
+    data.to_csv(bytes, index=False)
+    bytes.seek(0)
+    return bytes
 
 def main():
     st.title('Cumulative Frequencies Calculator')
@@ -30,11 +36,15 @@ def main():
         }).reset_index(drop=True)
 
         st.write(cf_data)
-
-        csv = cf_data.to_csv(index=False)
-        b64 = base64.b64encode(csv.encode()).decode()  # some strings
-        href = f'<a href="data:file/csv;base64,{b64}">Download CSV File</a> (right-click and save as .csv)'
-        st.markdown(href, unsafe_allow_html=True)
+           
+        if st.button("Download CSV File"):
+            bytes = save_to_csv(cf_data)
+            st.download_button(
+                label="Download CSV File",
+                data=bytes,
+                file_name='cumulative_frequencies.csv',
+                mime='text/csv',
+            )
 
 if __name__ == "__main__":
     main()
