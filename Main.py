@@ -37,14 +37,13 @@ def main():
 
         st.write(cf_data)
            
-        if st.button("Download CSV File"):
-            bytes = save_to_csv(cf_data)
-            st.download_button(
-                label="Download CSV File",
-                data=bytes,
-                file_name='cumulative_frequencies.csv',
-                mime='text/csv',
-            )
+        bytes = save_to_csv(cf_data)
+        st.download_button(
+            label="Download CSV File",
+            data=bytes,
+            file_name='cumulative_frequencies.csv',
+            mime='text/csv',
+        )
 
 if __name__ == "__main__":
     main()
