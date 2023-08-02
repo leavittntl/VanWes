@@ -19,18 +19,18 @@ def main():
     if uploaded_file is not None:
         data = load_data(uploaded_file)
 
-        starting_price_cf = (1 - (data['C'].value_counts().sort_index().cumsum() / data['C'].count())) * 100
-        not_expensive_cf = (1 - (data['TC'].value_counts().sort_index().cumsum() / data['TC'].count())) * 100
+        cheap_cf = (1 - (data['C'].value_counts().sort_index().cumsum() / data['C'].count())) * 100
+        too_cheap_cf = (1 - (data['TC'].value_counts().sort_index().cumsum() / data['TC'].count())) * 100
         expensive_cf = ((data['E'].value_counts().sort_index().cumsum() / data['E'].count()) * 100).sort_values(ascending=False)
         too_expensive_cf = ((data['TE'].value_counts().sort_index().cumsum() / data['TE'].count()) * 100).sort_values(ascending=False)
       
-        price_set = set(starting_price_cf.index) | set(not_expensive_cf.index) | set(expensive_cf.index) | set(too_expensive_cf.index)
+        price_set = set(cheap_cf.index) | set(too_cheap_cf.index) | set(expensive_cf.index) | set(too_expensive_cf.index)
         price_list = sorted(list(price_set))
 
         cf_data = pd.DataFrame({
             'Price': price_list,
-            'Starting_Price_CF': starting_price_cf.reindex(price_list).bfill(),
-            'Not_Expensive_CF': not_expensive_cf.reindex(price_list).bfill(),
+            'cheap_cf': cheap_cf.reindex(price_list).bfill(),
+            'too_cheap_cf': too_cheap_cf.reindex(price_list).bfill(),
             'Expensive_CF': expensive_cf.reindex(price_list).bfill(),
             'Too_Expensive_CF': too_expensive_cf.reindex(price_list).bfill()
         }).reset_index(drop=True)
